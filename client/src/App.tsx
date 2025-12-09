@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
-import { theme } from './theme';
+import { ColorModeProvider } from './context/ColorModeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -30,7 +30,7 @@ const AppRoutes: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider theme={theme}>
+    <ColorModeProvider>
       <CssBaseline />
       <SnackbarProvider maxSnack={3}>
         <AuthProvider>
@@ -39,7 +39,7 @@ const App: React.FC = () => {
           </Router>
         </AuthProvider>
       </SnackbarProvider>
-    </ThemeProvider>
+    </ColorModeProvider>
   );
 };
 

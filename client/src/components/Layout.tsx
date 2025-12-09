@@ -4,10 +4,11 @@ import {
   IconButton, Box, useMediaQuery, useTheme, Divider, ListItemButton
 } from '@mui/material';
 import { 
-  Menu as MenuIcon, Dashboard, ListAlt, ViewKanban, Logout, Add 
+  Menu as MenuIcon, Dashboard, ListAlt, ViewKanban, Logout, Add, Brightness4, Brightness7 
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useColorMode } from '../context/ColorModeContext';
 import LoadingBar from 'react-top-loading-bar';
 import { useSnackbar } from 'notistack';
 import { setupInterceptors } from '../api/axios';
@@ -17,6 +18,7 @@ const drawerWidth = 240;
 
 const Layout: React.FC = () => {
   const theme = useTheme();
+  const { toggleColorMode } = useColorMode();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -99,6 +101,9 @@ const Layout: React.FC = () => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             {user?.full_name} ({user?.role})
           </Typography>
+          <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
+            {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Box
