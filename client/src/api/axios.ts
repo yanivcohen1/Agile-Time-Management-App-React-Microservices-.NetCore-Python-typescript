@@ -4,14 +4,23 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
 });
 
+// Add token interceptor immediately so it's available for all requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const setupInterceptors = (setLoading: (progress: number) => void, enqueueSnackbar: (msg: string, opts: unknown) => void) => {
+  // Store interceptor IDs to eject them later if needed, but for now we just add them.
+  // Note: This might add duplicate interceptors if called multiple times.
+  // Ideally this should be called once or managed with a ref to check if initialized.
+  
   api.interceptors.request.use(
     (config) => {
       setLoading(30);
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
       return config;
     },
     (error) => {

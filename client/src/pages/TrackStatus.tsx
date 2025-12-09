@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-  TablePagination, TextField, MenuItem, Select, FormControl, InputLabel
+  TablePagination, TextField, MenuItem, Select, FormControl, InputLabel, IconButton
 } from '@mui/material';
+import { Edit, Delete } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -10,7 +11,7 @@ import api from '../api/axios';
 import { format } from 'date-fns';
 
 interface Todo {
-  id: string;
+  _id: string;
   title: string;
   status: string;
   due_date: string;
@@ -91,14 +92,23 @@ const TrackStatus: React.FC = () => {
               <TableCell>Title</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Due Date</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {todos.map((todo) => (
-              <TableRow key={todo.id}>
+              <TableRow key={todo._id}>
                 <TableCell>{todo.title}</TableCell>
                 <TableCell>{todo.status}</TableCell>
                 <TableCell>{todo.due_date ? format(new Date(todo.due_date), 'yyyy-MM-dd') : '-'}</TableCell>
+                <TableCell>
+                  <IconButton size="small" color="primary">
+                    <Edit />
+                  </IconButton>
+                  <IconButton size="small" color="error">
+                    <Delete />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
