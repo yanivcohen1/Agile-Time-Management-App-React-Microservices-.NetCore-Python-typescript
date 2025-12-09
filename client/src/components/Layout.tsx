@@ -1,0 +1,145 @@
+import React, { useState } from 'react';
+import { 
+  AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemIcon, ListItemText, 
+  IconButton, Box, useMediaQuery, useTheme, Divider, ListItemButton
+} from '@mui/material';
+import { 
+  Menu as MenuIcon, Dashboard, ListAlt, ViewKanban, Logout, Add 
+} from '@mui/icons-material';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import LoadingBar from 'react-top-loading-bar';
+import { useSnackbar } from 'notistack';
+import { setupInterceptors } from '../api/axios';
+import CreateTodoModal from './CreateTodoModal';
+
+const drawerWidth = 240;
+
+const Layout: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [progress, setProgress] = useState(0);
+  const { enqueueSnackbar } = useSnackbar();
+
+  React.useEffect(() => {
+    setupInterceptors(setProgress, enqueueSnackbar);
+  }, [enqueueSnackbar]);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const menuItems = [
+    { text: 'Main status board', icon: <Dashboard />, path: '/' },
+    { text: 'Track status', icon: <ListAlt />, path: '/track' },
+    { text: 'Agile menu', icon: <ViewKanban />, path: '/agile' },
+  ];
+
+  const drawer = (
+    <div>
+      <Toolbar>
+        <Typography variant="h6" noWrap component="div">
+          Todo App
+        </Typography>
+      </Toolbar>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+           <ListItemButton onClick={() => setCreateModalOpen(true)}>
+            <ListItemIcon><Add /></ListItemIcon>
+            <ListItemText primary="Create New" />
+           </ListItemButton>
+        </ListItem>
+        {menuItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton 
+              selected={location.pathname === item.path}
+              onClick={() => {
+                navigate(item.path);
+                if (isMobile) setMobileOpen(false);
+              }}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={logout}>
+            <ListItemIcon><Logout /></ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </div>
+  );
+
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <LoadingBar color={theme.palette.primary.main} progress={progress} onLoaderFinished={() => setProgress(0)} />
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            {user?.full_name} ({user?.role})
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+      >
+        <Drawer
+          variant={isMobile ? 'temporary' : 'permanent'}
+          open={isMobile ? mobileOpen : true}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              zIndex: isMobile ? 1300 : 'auto' // High z-index for mobile overlay
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+      >
+        <Toolbar />
+        <Outlet />
+      </Box>
+      <CreateTodoModal 
+        open={createModalOpen} 
+        onClose={() => setCreateModalOpen(false)} 
+        onTodoCreated={() => {
+            // Ideally trigger a refresh in the active view, but for now just close
+            // A global refresh context or event bus could be used, or just let the user navigate
+            // For E2E, we can verify the item appears after navigation or reload
+            window.dispatchEvent(new Event('todo-created')); // Simple event for now if needed
+        }}
+      />
+    </Box>
+  );
+};
+
+export default Layout;

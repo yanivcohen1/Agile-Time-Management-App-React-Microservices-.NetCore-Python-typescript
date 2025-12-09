@@ -1,0 +1,94 @@
+from typing import List, Optional
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, Query
+from app.models import Todo, User, Status
+from app.auth import get_current_user
+from beanie import PydanticObjectId
+from pydantic import BaseModel
+
+router = APIRouter(prefix="/todos", tags=["todos"])
+
+class TodoCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    status: Status = Status.BACKLOG
+    due_date: Optional[datetime] = None
+
+class TodoUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[Status] = None
+    due_date: Optional[datetime] = None
+
+@router.get("/", response_model=dict)
+async def get_todos(
+    page: int = 1,
+    size: int = 10,
+    sort_by: str = "created_at",
+    sort_desc: bool = True,
+    status: Optional[Status] = None,
+    search: Optional[str] = None,
+    due_date_start: Optional[datetime] = None,
+    due_date_end: Optional[datetime] = None,
+    current_user: User = Depends(get_current_user)
+):
+    query = Todo.find(Todo.user.id == current_user.id)
+    
+    if status:
+        query = query.find(Todo.status == status)
+    
+    if search:
+        query = query.find({"title": {"$regex": search, "$options": "i"}})
+        
+    if due_date_start:
+        query = query.find(Todo.due_date >= due_date_start)
+        
+    if due_date_end:
+        query = query.find(Todo.due_date <= due_date_end)
+
+    total = await query.count()
+    
+    sort_field = f"-{sort_by}" if sort_desc else sort_by
+    todos = await query.sort(sort_field).skip((page - 1) * size).limit(size).to_list()
+    
+    return {
+        "items": todos,
+        "total": total,
+        "page": page,
+        "size": size,
+        "pages": (total + size - 1) // size
+    }
+
+@router.get("/stats/workload")
+async def get_workload_stats(current_user: User = Depends(get_current_user)):
+    pipeline = [
+        {"$match": {"user.$id": current_user.id, "due_date": {"$ne": None}}},
+        {"$group": {"_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$due_date"}}, "count": {"$sum": 1}}},
+        {"$sort": {"_id": 1}}
+    ]
+    stats = await Todo.aggregate(pipeline).to_list()
+    return stats
+
+@router.post("/", response_model=Todo)
+async def create_todo(todo_in: TodoCreate, current_user: User = Depends(get_current_user)):
+    todo = Todo(**todo_in.dict(), user=current_user)
+    await todo.create()
+    return todo
+
+@router.put("/{id}", response_model=Todo)
+async def update_todo(id: PydanticObjectId, todo_in: TodoUpdate, current_user: User = Depends(get_current_user)):
+    todo = await Todo.find_one(Todo.id == id, Todo.user.id == current_user.id)
+    if not todo:
+        raise HTTPException(status_code=404, detail="Todo not found")
+    
+    update_data = todo_in.dict(exclude_unset=True)
+    await todo.update({"$set": update_data})
+    return todo
+
+@router.delete("/{id}")
+async def delete_todo(id: PydanticObjectId, current_user: User = Depends(get_current_user)):
+    todo = await Todo.find_one(Todo.id == id, Todo.user.id == current_user.id)
+    if not todo:
+        raise HTTPException(status_code=404, detail="Todo not found")
+    await todo.delete()
+    return {"message": "Todo deleted"}

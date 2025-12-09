@@ -1,0 +1,60 @@
+import asyncio
+# Monkeypatch asyncio.coroutine for Motor 2.5.1 compatibility with Python 3.14
+if not hasattr(asyncio, 'coroutine'):
+    asyncio.coroutine = lambda x: x
+
+import os
+from app.database import init_db
+from app.models import User, Todo, Role, Status
+from app.auth import get_password_hash
+from datetime import datetime, timedelta
+
+async def seed():
+    await init_db()
+    
+    # Seed Admin
+    admin_email = os.getenv("SEED_ADMIN_EMAIL", "admin@todo.dev")
+    admin_password = os.getenv("SEED_DEMO_PASSWORD", "ChangeMe123!")
+    admin_name = os.getenv("SEED_ADMIN_NAME", "Demo Admin")
+    
+    admin = await User.find_one(User.email == admin_email)
+    if not admin:
+        admin = User(
+            email=admin_email,
+            password_hash=get_password_hash(admin_password),
+            full_name=admin_name,
+            role=Role.ADMIN
+        )
+        await admin.create()
+        print(f"Created admin: {admin_email}")
+    
+    # Seed User
+    user_email = os.getenv("SEED_USER_EMAIL", "user@todo.dev")
+    user_password = os.getenv("SEED_DEMO_PASSWORD", "ChangeMe123!")
+    user_name = os.getenv("SEED_USER_NAME", "Demo User")
+    
+    user = await User.find_one(User.email == user_email)
+    if not user:
+        user = User(
+            email=user_email,
+            password_hash=get_password_hash(user_password),
+            full_name=user_name,
+            role=Role.USER
+        )
+        await user.create()
+        print(f"Created user: {user_email}")
+
+    # Seed Todos for User
+    if await Todo.find(Todo.user.id == user.id).count() == 0:
+        todos = [
+            Todo(title="Learn React", status=Status.COMPLETED, user=user, due_date=datetime.utcnow() - timedelta(days=1)),
+            Todo(title="Learn FastAPI", status=Status.IN_PROGRESS, user=user, due_date=datetime.utcnow() + timedelta(days=1)),
+            Todo(title="Build Todo App", status=Status.PENDING, user=user, due_date=datetime.utcnow() + timedelta(days=2)),
+            Todo(title="Deploy App", status=Status.BACKLOG, user=user, due_date=datetime.utcnow() + timedelta(days=5)),
+        ]
+        for todo in todos:
+            await todo.create()
+        print("Seeded todos for user")
+
+if __name__ == "__main__":
+    asyncio.run(seed())

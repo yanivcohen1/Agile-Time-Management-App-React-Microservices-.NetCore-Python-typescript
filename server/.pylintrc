@@ -1,0 +1,10 @@
+[MASTER]
+init-hook='import sys, os; sys.path.extend([os.getcwd(), os.path.join(os.getcwd(), "server")])'
+
+[MESSAGES CONTROL]
+# Disable specific warnings if needed, but keeping it clean for now.
+# C0114: Missing module docstring
+# C0116: Missing function or method docstring
+# W0621: Redefining name from outer scope (common in pytest)
+# W0613: Unused argument (common in pytest)
+disable=C0114,C0116,W0621,W0613

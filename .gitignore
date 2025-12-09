@@ -1,0 +1,4 @@
+server/app/__pycache__/
+server/node_modules/
+server/__pycache__/
+*.pyc
