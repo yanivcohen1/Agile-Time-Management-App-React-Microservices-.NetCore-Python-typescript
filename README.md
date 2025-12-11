@@ -166,3 +166,23 @@ All scripts are run from the `client` directory using `pnpm <script-name>`.
 
 - **Backend**: Configured via `server/config.dev.yaml` and `server/config.prod.yaml`.
 - **Frontend**: Environment variables in `.env` (if applicable) and `vite.config.ts`.
+
+## Main Board
+<img width="2282" height="1606" alt="image" src="https://github.com/user-attachments/assets/d5bb8687-b1a3-4d95-bf44-806b837bd4bb" />
+
+## Track Status
+<img width="2282" height="1608" alt="image" src="https://github.com/user-attachments/assets/bf75aaf4-5995-479a-b3db-a22edf89bf2f" />
+
+## Agile Board
+<img width="2346" height="1543" alt="image" src="https://github.com/user-attachments/assets/04b885b3-fa01-4d70-a756-c8cb4cc38413" />
+
+## Ligth mode
+<img width="2318" height="1538" alt="image" src="https://github.com/user-attachments/assets/46028482-98d9-4a9c-bbec-796ad8834afe" />
+
+## Mobile mode
+<img width="1053" height="1779" alt="image" src="https://github.com/user-attachments/assets/1095919d-d44a-4701-b973-e4a65c5b1330" />
+
+
+
+
+
