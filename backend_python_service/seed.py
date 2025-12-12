@@ -1,3 +1,12 @@
+"""
+Database Seeding Script
+
+This script initializes the database with default users and sample data.
+It creates:
+- An Admin user (if not exists)
+- A Demo user (if not exists)
+- Sample Todo items for the Demo user
+"""
 import asyncio
 # Monkeypatch asyncio.coroutine for Motor 2.5.1 compatibility with Python 3.14
 if not hasattr(asyncio, 'coroutine'):
@@ -47,10 +56,10 @@ async def seed():
     # Seed Todos for User
     if await Todo.find(Todo.user.id == user.id).count() == 0:
         todos = [
-            Todo(title="Learn React", status=Status.COMPLETED, user=user, due_date=datetime.utcnow() - timedelta(days=1), duration="2h"),
-            Todo(title="Build a Project", status=Status.IN_PROGRESS, user=user, due_date=datetime.utcnow() + timedelta(days=2), duration="5h"),
-            Todo(title="Master FastAPI", status=Status.PENDING, user=user, due_date=datetime.utcnow() + timedelta(days=5), duration="3h"),
-            Todo(title="Deploy App", status=Status.BACKLOG, user=user, due_date=datetime.utcnow() + timedelta(days=10), duration="1h"),
+            Todo(title="Learn React", description="Understand components, hooks, and state management.", status=Status.COMPLETED, user=user, due_date=datetime.utcnow() - timedelta(days=1), duration="2h"),
+            Todo(title="Build a Project", description="Create a full-stack application using React and Python.", status=Status.IN_PROGRESS, user=user, due_date=datetime.utcnow() + timedelta(days=2), duration="5h"),
+            Todo(title="Master FastAPI", description="Learn about dependency injection, Pydantic models, and async routes.", status=Status.PENDING, user=user, due_date=datetime.utcnow() + timedelta(days=5), duration="3h"),
+            Todo(title="Deploy App", description="Deploy the application to a cloud provider like Azure or AWS.", status=Status.BACKLOG, user=user, due_date=datetime.utcnow() + timedelta(days=10), duration="1h"),
         ]
         for todo in todos:
             await todo.create()
