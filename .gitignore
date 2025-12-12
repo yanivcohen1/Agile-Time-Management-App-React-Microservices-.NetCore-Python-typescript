@@ -1,8 +1,9 @@
-server/app/__pycache__/
-server/node_modules/
-server/__pycache__/
+backend_python_service/app/__pycache__/
+backend_python_service/node_modules/
+backend_python_service/__pycache__/
 *.pyc
 .github/copilot-instructions.md
 plan.md
 planning instarctions.txt
 client/cypress/reports/
+README2.md

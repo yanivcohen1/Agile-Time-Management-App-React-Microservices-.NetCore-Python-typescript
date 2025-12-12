@@ -1,183 +1,90 @@
-# React + FastAPI Full Stack Application
+# Time Management App
 
-A modern full-stack web application built with React (Vite) for the frontend and FastAPI for the backend, using MongoDB as the database.
+A comprehensive full-stack application designed for time management and task tracking. This project demonstrates a modern microservices architecture with a React frontend and multiple backend services.
 
 ## 🏗 Architecture
 
-- **Frontend**: React, TypeScript, Vite, Material UI
-- **Backend**: Python, FastAPI, Motor (Async MongoDB), Beanie ODM
-- **Database**: MongoDB
+The solution consists of three main components:
 
-## ✨ Features
+1.  **Frontend**: A Single Page Application (SPA) built with React.
+2.  **Auth Service (.NET)**: A robust authentication and user management service.
+3.  **Backend Service (Python)**: A lightweight service for additional functionality (e.g., alternative auth/data processing).
 
-- **User Authentication**: Secure login and registration system.
-- **Role-Based Access**: Support for different user roles (User, Admin).
-- **Todo Management**: Full CRUD operations for managing tasks.
-- **Task Duration**: Track the estimated or actual duration (in hours) for each task.
-- **Agile Board**: Interactive Kanban-style board with drag-and-drop functionality.
-- **Status Tracking**: Detailed table view for tracking task status and details.
-- **Dashboard**: Visual statistics on task status and workload distribution.
+## 🚀 Technologies
 
-## 🚀 Getting Started
+### Frontend (`/frontend`)
+*   **Framework**: React 18 + TypeScript + Vite
+*   **UI Libraries**: Material UI (MUI) v5 + PrimeReact v10
+*   **Routing**: React Router v6 (Nested Routes)
+*   **State Management**: Context API
+*   **Testing**: Vitest + React Testing Library
+*   **E2E Testing**: Playwright
+*   **Key Features**:
+    *   Dark/Light Theme switching (synced between MUI and PrimeReact)
+    *   Responsive Sidebar Drawer (Desktop/Mobile layouts)
+    *   Role-based Access Control (RBAC)
+    *   Breadcrumb navigation
+*   Configuration: YAML-based settings
 
-### Prerequisites
+### Backend - .NET Core (`/backend_netCore_service`)
+*   **Framework**: ASP.NET Core 9.0 Web API
+*   **Database**: MongoDB (via Entity Framework Core)
+*   **Authentication**: JWT (JSON Web Tokens)
+*   **Testing**: xUnit + WebApplicationFactory (Integration Tests)
+*   **Configuration**: YAML-based settings
+*   **Swagger**: API Documentation with Swagger
 
-- Node.js & pnpm
-- Python 3.10+
-- MongoDB running locally (default: `mongodb://localhost:27017`)
+### Backend - Python (`/backend_python_service`)
+*   **Framework**: FastAPI
+*   **Database**: MongoDB (via Motor(Async MongoDB), Beanie ODM)
+*   **Authentication**: JWT
+*   Configuration: YAML-based settings
+*   **Testing**: Pytest + TestClient
+*   **Swagger**: API Documentation with Swagger
 
-### Installation
-
-1. **Clone the repository**
-
-2. **Backend Setup**
-   Navigate to the `server` directory and set up your Python environment.
-   ```bash
-   cd server
-   python -m venv venv
-   # Activate venv
-   # Windows: .\venv\Scripts\activate
-   # Unix: source venv/bin/activate
-   
-   # Install dependencies
-   # Note: Ensure you have the necessary packages installed (fastapi, uvicorn, motor, beanie, pydantic, pyyaml, pytest)
-   # pip install -r requirements.txt # (If requirements.txt is present)
-   ```
-
-3. **Frontend Setup**
-   Navigate to the `client` directory and install dependencies.
-   ```bash
-   cd client
-   pnpm install
-   ```
-
-## 🛠 Development
-
-The project is designed to be run primarily from the `client` directory using `pnpm` scripts that orchestrate both frontend and backend tasks.
-
-### Start the Application
-
-1. **Start the Backend Server**
-   ```bash
-   cd client
-   pnpm server
-   ```
-   Runs on `http://localhost:5000`.
-
-2. **Start the Frontend Development Server**
-   ```bash
-   cd client
-   pnpm dev
-   ```
-   Runs on `http://localhost:5173`.
-
-### Database Seeding
-
-To populate the database with initial data:
-```bash
-cd client
-pnpm seed
-```
-
-## 🧪 Testing
-
-- **Frontend Unit Tests**: `pnpm test`
-- **Frontend E2E Tests**: `pnpm test:e2e` (Cypress)
-- **Backend Tests**: `pnpm test:py`
-
-## 📜 Available Scripts
-
-All scripts are run from the `client` directory using `pnpm <script-name>`.
-
-| Script | Description |
-| :--- | :--- |
-| `dev` | Starts the frontend development server (Vite). |
-| `build` | Builds the frontend for production. |
-| `preview` | Previews the production build locally. |
-| `lint` | Lints the frontend code using ESLint. |
-| `test` | Runs frontend unit tests (Vitest). |
-| `test:watch` | Runs frontend unit tests in watch mode. |
-| `coverage` | Runs frontend unit tests with coverage report. |
-| `test:e2e` | Runs end-to-end tests (Cypress). |
-| `test:e2e:report` | Runs E2E tests and generates a report. |
-| `test:py` | Runs backend tests (Pytest). |
-| `lint:py` | Lints the backend code using Pylint. |
-| `seed` | Seeds the MongoDB database with initial data. |
-| `serve` | Starts the backend server in development mode (with reload). |
-| `serve:prod` | Starts the backend server in production mode. |
-
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```
-├── client/                 # Frontend application
-│   ├── cypress/           # E2E tests
-│   │   ├── e2e/
-│   │   │   ├── login.cy.ts
-│   │   │   └── todo.cy.ts
-│   │   └── ...
-│   ├── public/            # Static assets
-│   ├── src/
-│   │   ├── api/           # API integration
-│   │   │   └── axios.ts
-│   │   ├── assets/        # Source assets
-│   │   ├── components/    # Reusable UI components
-│   │   │   ├── CreateTodoModal.tsx
-│   │   │   └── Layout.tsx
-│   │   ├── context/       # React Context (State Management)
-│   │   │   ├── AuthContext.tsx
-│   │   │   └── ColorModeContext.tsx
-│   │   ├── pages/         # Page components
-│   │   │   ├── AgileBoard.tsx
-│   │   │   ├── Dashboard.tsx
-│   │   │   ├── Login.tsx
-│   │   │   └── TrackStatus.tsx
-│   │   ├── App.tsx        # Main App component
-│   │   ├── main.tsx       # Entry point
-│   │   ├── theme.ts       # MUI Theme configuration
-│   │   └── ...
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── ...
-├── server/                 # Backend application
-│   ├── app/
-│   │   ├── routes/        # API Routes
-│   │   │   ├── auth.py
-│   │   │   └── todos.py
-│   │   ├── auth.py        # Auth utilities
-│   │   ├── config.py      # Configuration loader
-│   │   ├── database.py    # Database connection
-│   │   ├── main.py        # FastAPI entry point
-│   │   └── models.py      # Database models
-│   ├── tests/             # Backend tests
-│   │   ├── conftest.py
-│   │   ├── test_api.py
-│   │   ├── test_check_users.py
-│   │   └── test_login.py
-│   ├── config.dev.yaml    # Dev configuration
-│   ├── config.prod.yaml   # Prod configuration
-│   ├── seed.py            # Database seeder
-│   └── ...
-├── README.md
-└── ...
+root/
+├── frontend/                 # React Application
+├── backend_netCore_service/  # ASP.NET Core Web API
+├── backend_python_service/   # FastAPI Service
+└── README.md                 # This file
 ```
 
-## 📝 Configuration
+## 🛠 Getting Started
 
-- **Backend**: Configured via `server/config.dev.yaml` and `server/config.prod.yaml`.
-- **Frontend**: Environment variables in `.env` (if applicable) and `vite.config.ts`.
+Each service has its own detailed setup instructions. Please refer to the respective README files:
 
-## Main Board
-<img width="2273" height="1587" alt="image" src="https://github.com/user-attachments/assets/7c5ce500-2ea9-4da5-a5f8-02f64c1a195f" />
+*   [Frontend Setup](./frontend/README.md)
+*   [.NET Backend Setup](./backend_netCore_service/README.md)
+*   [Python Backend Setup](./backend_python_service/readme.md)
+
+## ✨ Recent Updates
+
+*   **UI Overhaul**: Integrated PrimeReact components into the Material UI shell.
+*   **Theming**: Implemented a synchronized Dark/Light mode across all UI components.
+*   **Navigation**: Enhanced sidebar navigation with active state logic and breadcrumbs.
+*   **Routing**: Improved deep-linking capabilities for "About Me" and other nested pages.
+
+
+
+## Main Page
+
+<img width="1692" height="1496" alt="image" src="https://github.com/user-attachments/assets/54f149ee-3565-4e59-bc7a-5145bd1d9bf9" />
 
 ## Track Status
-<img width="2280" height="1557" alt="image" src="https://github.com/user-attachments/assets/f38b4fcd-ecb2-4268-89c3-f5163ee48c6f" />
 
-## Agile Board
-<img width="2598" height="1494" alt="image" src="https://github.com/user-attachments/assets/8d395445-01e9-4946-bad5-afb05dae0561" />
+<img width="2262" height="1440" alt="image" src="https://github.com/user-attachments/assets/edb01bb2-1155-4b27-9ff3-44f66a0bd4a6" />
+
+## Board page
+
+<img width="2089" height="1387" alt="image" src="https://github.com/user-attachments/assets/547d7f14-a20c-4ea7-abe0-4866011828ef" />
 
 ## Ligth mode
-<img width="2276" height="1709" alt="image" src="https://github.com/user-attachments/assets/bcf05515-a81a-46f4-9ffa-a53091aec02a" />
+
+<img width="2275" height="1438" alt="image" src="https://github.com/user-attachments/assets/62f68e96-2479-4454-8793-2ceaaca71be9" />
 
 ## Mobile mode
-<img width="1034" height="1888" alt="image" src="https://github.com/user-attachments/assets/7ed3a206-3d2f-491a-bc39-8593fdd4eb3e" />
+
+<img width="1118" height="1351" alt="image" src="https://github.com/user-attachments/assets/2ade3bf7-80fa-46b7-8980-40e415415040" />
