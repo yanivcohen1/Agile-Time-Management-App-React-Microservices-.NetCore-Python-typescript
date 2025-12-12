@@ -60,6 +60,41 @@ Each service has its own detailed setup instructions. Please refer to the respec
 *   [.NET Backend Setup](./backend_netCore_service/README.md)
 *   [Python Backend Setup](./backend_python_service/README.md)
 
+## 📦 Available Scripts
+
+All commands are run from the `client/` directory using `pnpm`.
+
+### Frontend
+| Script | Command | Description |
+| :--- | :--- | :--- |
+| `dev` | `vite` | Start the frontend development server |
+| `build` | `tsc -b && vite build` | Build the frontend for production |
+| `preview` | `vite preview` | Preview the production build |
+| `lint` | `eslint .` | Lint the frontend code |
+| `test` | `vitest run` | Run frontend unit tests |
+| `test:watch` | `vitest` | Run frontend unit tests in watch mode |
+| `coverage` | `vitest run --coverage` | Run frontend tests with coverage report |
+| `test:e2e` | `cypress run ...` | Run E2E tests with Cypress |
+| `test:e2e:report` | `cypress run ...` | Run E2E tests and generate report |
+
+### Backend - Python
+| Script | Command | Description |
+| :--- | :--- | :--- |
+| `serve:py` | `uvicorn app.main:app ...` | Start Python backend (Dev) |
+| `serve:py:prod` | `uvicorn app.main:app ...` | Start Python backend (Prod) |
+| `seed:py` | `python seed.py` | Seed the Python backend database |
+| `test:py` | `pytest` | Run Python backend tests |
+| `lint:py` | `pylint app tests` | Lint Python backend code |
+
+### Backend - .NET
+| Script | Command | Description |
+| :--- | :--- | :--- |
+| `serve:cs` | `dotnet run` | Start .NET backend (Dev) |
+| `serve:cs:prod` | `dotnet run -- --env prod` | Start .NET backend (Prod) |
+| `seed:cs` | `dotnet run -- --seed` | Seed the .NET backend database |
+| `test:cs` | `dotnet test` | Run .NET backend tests |
+| `lint:cs` | `dotnet format` | Format .NET backend code |
+
 ## ✨ Recent Updates
 
 *   **UI Overhaul**: Integrated PrimeReact components into the Material UI shell.
