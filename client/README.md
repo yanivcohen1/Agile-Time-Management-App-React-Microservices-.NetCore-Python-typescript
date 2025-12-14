@@ -11,6 +11,16 @@ This is the frontend application for the Time Management App, built with React, 
 *   **Testing**: Vitest (Unit), Cypress (E2E)
 *   **HTTP Client**: Axios
 
+## 🏗 Architecture & Patterns
+
+- **State Management:** React Context (`src/context/`) is used for global state like Auth and Theme.
+- **API Layer:** `src/api/axios.ts` configures the Axios instance with interceptors for:
+  - Attaching JWT tokens (`Authorization: Bearer ...`).
+  - Global loading progress bar.
+  - Global error handling (snackbars).
+- **UI Components:** Uses Material UI (`@mui/material`). Custom theme defined in `src/theme.ts`.
+- **Routing:** `react-router-dom` defined in `src/App.tsx`.
+
 ## 🛠 Setup & Installation
 
 ### Prerequisites

@@ -9,6 +9,14 @@ This is the authentication and user management service, built with ASP.NET Core 
 *   **Testing**: xUnit, FluentAssertions, WebApplicationFactory
 *   **Documentation**: Swagger / OpenAPI
 
+## 🏗 Architecture & Patterns
+
+- **Controllers:** Use `[ApiController]` and `[Route("[controller]")]` attributes.
+- **Dependency Injection:** Register services in `Program.cs`.
+- **Configuration:** Use `IOptions<T>` for accessing settings.
+- **Database:** MongoDB via Entity Framework Core.
+- **Authentication:** JWT-based authentication with role-protected endpoints.
+
 ## 🛠 Setup & Installation
 
 ### Prerequisites

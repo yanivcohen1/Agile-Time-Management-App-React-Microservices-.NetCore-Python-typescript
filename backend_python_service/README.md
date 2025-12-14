@@ -10,6 +10,15 @@ This is the secondary backend service, built with FastAPI and Python.
 *   **Linting**: Mypy
 *   **Package Manager**: pip
 
+## 🏗 Architecture & Patterns
+
+- **Async/Await:** All route handlers and DB operations must be `async`.
+- **Models:** Define data structures in `app/models.py`.
+  - Models are defined as Pydantic models inheriting from `beanie.Document`.
+- **Routes:** Group routes in `app/routes/` and include them in `app/main.py`.
+- **Configuration:** Settings loaded from `config.dev.yaml` / `config.prod.yaml` via `app/config.py`.
+- **Database Initialization:** Happens in `app/database.py` called from `app/main.py` startup event.
+
 ## 🛠 Setup & Installation
 
 ### Prerequisites

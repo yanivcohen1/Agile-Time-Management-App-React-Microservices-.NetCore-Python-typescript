@@ -10,6 +10,31 @@ The solution consists of three main components:
 2.  **Auth Service (.NET)**: A robust authentication and user management service.
 3.  **Backend Service (Python)**: A lightweight service for additional functionality (e.g., alternative auth/data processing).
 
+### Architecture & Patterns
+
+#### Frontend (`client/`)
+- **State Management:** React Context (`src/context/`) is used for global state like Auth and Theme.
+- **API Layer:** `src/api/axios.ts` configures the Axios instance with interceptors for:
+  - Attaching JWT tokens (`Authorization: Bearer ...`).
+  - Global loading progress bar.
+  - Global error handling (snackbars).
+- **UI Components:** Uses Material UI (`@mui/material`). Custom theme defined in `src/theme.ts`.
+- **Routing:** `react-router-dom` defined in `src/App.tsx`.
+
+#### Backend - Python (`backend_python_service/`)
+- **Framework:** FastAPI with async routes.
+- **Database:** MongoDB accessed via **Beanie** ODM (`app/models.py`).
+  - Models are defined as Pydantic models inheriting from `beanie.Document`.
+  - Database initialization happens in `app/database.py` called from `app/main.py` startup event.
+- **Configuration:** Settings loaded from `config.dev.yaml` / `config.prod.yaml` via `app/config.py`.
+
+#### Backend - .NET Core (`backend_netCore_service/`)
+- **Framework:** ASP.NET Core 9.0 Web API.
+- **Database:** MongoDB via Entity Framework Core.
+- **Authentication:** JWT-based authentication with role-protected endpoints.
+- **Configuration:** YAML-based settings (`dev.appsettings.yaml`, `prod.appsettings.yaml`).
+- **Testing:** xUnit + WebApplicationFactory (Integration Tests).
+
 ## 🚀 Technologies
 
 ### Frontend (`/client`)
