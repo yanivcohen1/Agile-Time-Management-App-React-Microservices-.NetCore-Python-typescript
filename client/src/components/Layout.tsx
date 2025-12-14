@@ -109,7 +109,7 @@ const Layout: React.FC = () => {
           </IconButton>
           <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
             <CheckCircleOutline sx={{ color: theme.palette.mode === 'light' ? 'black' : '#2196f3', mr: 1 }} />
-            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: theme.palette.mode === 'light' ? 'black' : undefined }}>
               Agile Tasks
             </Typography>
           </Box>
