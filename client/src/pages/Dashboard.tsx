@@ -68,7 +68,7 @@ const Dashboard: React.FC = () => {
       {/* Image 1: Status Cards */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
         {statusStats && statusOrder.map((status) => (
-          <Grid item xs={12} sm={6} md={3} key={status}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={status}>
             <Card variant="outlined">
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
       <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>Dates by workload</Typography>
       
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6} order={{ xs: 2, md: 1 }}>
+        <Grid size={{ xs: 12, md: 6 }} order={{ xs: 2, md: 1 }}>
           {/* Image 2: Workload List */}
           <Stack spacing={2}>
             {workloadStats.map((stat) => (
@@ -112,12 +112,12 @@ const Dashboard: React.FC = () => {
           </Stack>
         </Grid>
 
-        <Grid item xs={12} md={6} order={{ xs: 1, md: 2 }}>
+        <Grid size={{ xs: 12, md: 6 }} order={{ xs: 1, md: 2 }}>
           {/* Chart */}
           {workloadStats.length > 0 && (
             <Paper variant="outlined" sx={{ p: 2, height: 400 }}>
                 <BarChart
-                    dataset={workloadStats}
+                    dataset={workloadStats as any}
                     xAxis={[{ scaleType: 'band', dataKey: '_id', valueFormatter: (v) => new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }]}
                     series={[
                         { dataKey: 'backlog', label: 'Backlog', stack: 'total', color: theme.palette.grey[500] },
@@ -126,7 +126,6 @@ const Dashboard: React.FC = () => {
                         { dataKey: 'completed', label: 'Completed', stack: 'total', color: theme.palette.success.main },
                     ]}
                     height={350}
-                    slotProps={{ legend: { hidden: false } }}
                     margin={{ left: 40, right: 40, top: 40, bottom: 40 }}
                 />
             </Paper>
