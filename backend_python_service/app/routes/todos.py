@@ -49,6 +49,9 @@ async def get_todos(
         query = query.find(Todo.due_date >= due_date_start)  # type: ignore
 
     if due_date_end:
+        # If the time is midnight, assume it's a date filter and include the whole day
+        if due_date_end.time() == datetime.min.time():
+            due_date_end = due_date_end.replace(hour=23, minute=59, second=59, microsecond=999999)
         query = query.find(Todo.due_date <= due_date_end)  # type: ignore
 
     total = await query.count()

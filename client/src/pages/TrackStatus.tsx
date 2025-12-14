@@ -9,6 +9,7 @@ import { Edit, Delete } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format } from 'date-fns';
 import api from '../api/axios';
 import CreateTodoModal from '../components/CreateTodoModal';
 import { useSnackbar } from 'notistack';
@@ -60,10 +61,10 @@ const TrackStatus: React.FC = () => {
       sort_desc: order === 'desc',
     };
     if (startDate) {
-        params.due_date_start = startDate.toISOString();
+        params.due_date_start = format(startDate, 'yyyy-MM-dd');
     }
     if (endDate) {
-        params.due_date_end = endDate.toISOString();
+        params.due_date_end = format(endDate, 'yyyy-MM-dd');
     }
 
     try {
