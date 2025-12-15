@@ -34,6 +34,10 @@ const Layout: React.FC = () => {
     setupInterceptors(setProgress, enqueueSnackbar, logout);
   }, [enqueueSnackbar, logout]);
 
+  React.useEffect(() => {
+    setAdminOpen(location.pathname.startsWith('/admin'));
+  }, [location.pathname]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
