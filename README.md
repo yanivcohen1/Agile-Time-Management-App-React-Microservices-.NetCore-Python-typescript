@@ -128,7 +128,7 @@ All commands are run from the `client/` directory using `pnpm`.
 *   **Routing**: Improved deep-linking capabilities for "About Me" and other nested pages.
 
 ## Main Board
-<img width="2273" height="1587" alt="image" src="https://github.com/user-attachments/assets/7c5ce500-2ea9-4da5-a5f8-02f64c1a195f" />
+<img width="1934" height="1825" alt="image" src="https://github.com/user-attachments/assets/41c9197f-c619-4365-94da-f6aa5a280e52" />
 
 ## Track Status
 <img width="1956" height="1275" alt="image" src="https://github.com/user-attachments/assets/60552f80-dc51-425a-a657-ba1cdcdfc775" />
