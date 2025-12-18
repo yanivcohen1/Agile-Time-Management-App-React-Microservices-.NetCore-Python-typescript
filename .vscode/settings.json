@@ -25,5 +25,11 @@
     "vitest.commandLine": "pnpm run test:watch",
     "vitest.configPath": "${workspaceFolder}/client/vitest.config.ts",
     "vitest.workingDirectory": "${workspaceFolder}/client",
-    "jest.enable": false
+    "jest.enable": false,
+    "cypress.env.NODE_PATH": "${workspaceFolder}/client/node_modules",
+    "cypressTestExplorer.configFilePath": "${workspaceFolder}/client/cypress.config.ts",
+    "cypressTestExplorer.workingDirectory": "${workspaceFolder}/client",
+    "cypressTestExplorer.useTerminal": "external",
+    "cypressTestExplorer.cypressCommand": "pnpm --dir client exec cypress",
+    "cypressTestExplorer.shell": "cmd"
 }
