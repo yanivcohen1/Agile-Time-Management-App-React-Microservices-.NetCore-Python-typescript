@@ -128,16 +128,16 @@ All commands are run from the `client/` directory using `pnpm`.
 *   **Routing**: Improved deep-linking capabilities for "About Me" and other nested pages.
 
 ## Main Board
-<img width="1934" height="1825" alt="image" src="https://github.com/user-attachments/assets/41c9197f-c619-4365-94da-f6aa5a280e52" />
+<img width="2357" height="1641" alt="image" src="https://github.com/user-attachments/assets/c3b693db-2a38-4000-b42d-9d33a7cb59d2" />
 
 ## Track Status
-<img width="1956" height="1275" alt="image" src="https://github.com/user-attachments/assets/60552f80-dc51-425a-a657-ba1cdcdfc775" />
+<img width="2346" height="1652" alt="image" src="https://github.com/user-attachments/assets/3515cbb9-9a15-4e07-bd82-ed642ead7c5e" />
 
 ## Agile Board
-<img width="2633" height="1345" alt="image" src="https://github.com/user-attachments/assets/5708a72f-7c29-46b4-ad91-46b91428b6ff" />
+<img width="2359" height="1590" alt="image" src="https://github.com/user-attachments/assets/5adff857-bb68-4a87-977c-8374196da52d" />
 
 ## Ligth mode
-<img width="1866" height="1853" alt="image" src="https://github.com/user-attachments/assets/3272061d-4758-45e8-a4a4-50c14fd0fe88" />
+<img width="2350" height="1634" alt="image" src="https://github.com/user-attachments/assets/8787e147-3769-4a91-8844-568c52bce2f4" />
 
 ## Mobile mode
-<img width="1034" height="1888" alt="image" src="https://github.com/user-attachments/assets/7ed3a206-3d2f-491a-bc39-8593fdd4eb3e" />
+<img width="1008" height="1650" alt="image" src="https://github.com/user-attachments/assets/3f6e5a13-82f0-4cba-ac78-8efffe51f357" />
