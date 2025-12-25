@@ -143,6 +143,7 @@ const CreateTodoModal: React.FC<CreateTodoModalProps> = ({ open, onClose, onTodo
             value={status}
             label="Status"
             onChange={(e) => setStatus(e.target.value)}
+            MenuProps={{ sx: { zIndex: 1700 } }}
           >
             <MenuItem value="BACKLOG">Backlog</MenuItem>
             <MenuItem value="PENDING">Pending</MenuItem>
@@ -155,7 +156,7 @@ const CreateTodoModal: React.FC<CreateTodoModalProps> = ({ open, onClose, onTodo
             label="Due Date"
             value={dueDate}
             onChange={(newValue) => setDueDate(newValue)}
-            slotProps={{ textField: { fullWidth: true } }}
+            slotProps={{ textField: { fullWidth: true }, popper: { sx: { zIndex: 1700 } } }}
           />
         </LocalizationProvider>
       </DialogContent>
