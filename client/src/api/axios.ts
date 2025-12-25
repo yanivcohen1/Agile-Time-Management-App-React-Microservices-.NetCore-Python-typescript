@@ -42,7 +42,12 @@ export const setupInterceptors = (
           onUnauthorized();
         }
       }
-
+      if (Array.isArray(message)) {
+        message.forEach((msg) => {
+          enqueueSnackbar(msg.msg, { variant: 'error' });
+        });
+        return Promise.reject(error);
+      }
       enqueueSnackbar(message, { variant: 'error' });
       return Promise.reject(error);
     }
