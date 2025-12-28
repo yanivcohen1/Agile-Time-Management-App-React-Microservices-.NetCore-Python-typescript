@@ -6,6 +6,7 @@ This is the secondary backend service, built with FastAPI and Python.
 
 *   **Framework**: FastAPI
 *   **Database**: MongoDB (via Motor & Beanie ODM)
+*   **Migrations**: pymongo-migrate for database schema and data migrations
 *   **Testing**: Pytest
 *   **Linting**: Mypy
 *   **Package Manager**: pip
@@ -18,6 +19,50 @@ This is the secondary backend service, built with FastAPI and Python.
 - **Routes:** Group routes in `app/routes/` and include them in `app/main.py`.
 - **Configuration:** Settings loaded from `config.dev.yaml` / `config.prod.yaml` via `app/config.py`.
 - **Database Initialization:** Happens in `app/database.py` called from `app/main.py` startup event.
+
+## 🗄 Database Migrations and Restore
+
+The service uses pymongo-migrate for managing database migrations, allowing versioned changes to the MongoDB schema and data.
+
+### Migration History Folder
+
+Migrations are stored in the `migrations/` folder within the `backend_python_service` directory. Each migration file represents a versioned change to the database.
+
+### Restoring from Migration History
+
+To restore the database to a specific point in history or apply pending migrations:
+
+1. **Apply All Pending Migrations**:
+   ```bash
+   cd backend_python_service
+   pymongo-migrate migrate
+   ```
+   This will apply all unapplied migrations in order.
+
+2. **Revert to a Specific Migration**:
+   ```bash
+   cd backend_python_service
+   pymongo-migrate migrate --to <migration-name>
+   ```
+   Replace `<migration-name>` with the name of the migration to revert to.
+
+3. **View Migration Status**:
+   ```bash
+   cd backend_python_service
+   pymongo-migrate status
+   ```
+   This displays the current migration state and any pending migrations.
+
+4. **Generate a New Migration** (for development):
+   ```bash
+   cd backend_python_service
+   pymongo-migrate create <migration-name>
+   ```
+   This creates a new migration file in the `migrations/` folder.
+
+**Note**: Ensure MongoDB is running and the connection string is properly configured. Migrations are applied automatically on application startup if the database model schema has changed.
+
+**Automatic Migration Updates**: The application automatically applies any pending migrations on startup. If the database model schema changes, the migrations will be applied automatically when the application starts, ensuring the database is always up-to-date.
 
 ## 🛠 Setup & Installation
 
@@ -116,6 +161,7 @@ backend_python_service/
 │   ├── database.py         # Database connection and initialization
 │   ├── main.py             # Application entry point
 │   └── models.py           # Database models (Beanie/Pydantic)
+├── migrations/             # Database migration files (pymongo-migrate)
 ├── tests/                  # Test suite
 │   ├── conftest.py         # Pytest fixtures and configuration
 │   ├── test_api.py         # General API tests
@@ -123,6 +169,7 @@ backend_python_service/
 │   └── test_login.py       # Authentication tests
 ├── config.dev.yaml         # Development configuration settings
 ├── config.prod.yaml        # Production configuration settings
+├── pymongo_migrate.yml     # pymongo-migrate configuration
 ├── pnpm-lock.yaml          # Lock file (if used in workspace)
 ├── pytest.ini              # Pytest configuration
 ├── readme.md               # Project documentation

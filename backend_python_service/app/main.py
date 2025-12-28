@@ -1,5 +1,6 @@
 import asyncio
 import os
+import subprocess
 # Monkeypatch asyncio.coroutine for Motor 2.5.1 compatibility with Python 3.14
 if not hasattr(asyncio, 'coroutine'):
     asyncio.coroutine = lambda x: x  # type: ignore
@@ -26,6 +27,16 @@ app.add_middleware(
 async def on_startup():
     print(f"Running in environment: {os.getenv('ENV', 'dev')}")
     await init_db()
+    
+    # Automatically apply pending migrations
+    try:
+        result = subprocess.run(["pymongo-migrate", "migrate"], capture_output=True, text=True, cwd=os.path.dirname(__file__))
+        if result.returncode == 0:
+            print("Migrations applied successfully.")
+        else:
+            print(f"Migration failed: {result.stderr}")
+    except FileNotFoundError:
+        print("pymongo-migrate not found. Please install it or ensure it's in PATH.")
 
 app.include_router(auth.router)
 app.include_router(todos.router)

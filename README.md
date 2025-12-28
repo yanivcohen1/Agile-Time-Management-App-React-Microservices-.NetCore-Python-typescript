@@ -26,6 +26,7 @@ The solution consists of three main components:
 - **Database:** MongoDB accessed via **Beanie** ODM (`app/models.py`).
   - Models are defined as Pydantic models inheriting from `beanie.Document`.
   - Database initialization happens in `app/database.py` called from `app/main.py` startup event.
+- **Migrations**: pymongo-migrate for database schema and data migrations Versioning (History) and Rollback (Restore/Down)
 - **Configuration:** Settings loaded from `config.dev.yaml` / `config.prod.yaml` via `app/config.py`.
 
 #### Backend - .NET Core (`backend_netCore_service/`)
@@ -33,6 +34,7 @@ The solution consists of three main components:
 - **Database:** MongoDB via Entity Framework Core.
 - **Authentication:** JWT-based authentication with role-protected endpoints.
 - **Configuration:** YAML-based settings (`dev.appsettings.yaml`, `prod.appsettings.yaml`).
+- **Migrations**:  MongoDB.Entities for database schema and data migrations Versioning (History) and Rollback (Restore/Down)
 - **Testing:** xUnit + WebApplicationFactory (Integration Tests).
 
 ## 🚀 Technologies

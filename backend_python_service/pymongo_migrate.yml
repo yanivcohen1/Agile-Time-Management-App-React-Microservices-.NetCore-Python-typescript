@@ -1,0 +1,2 @@
+database: mongodb://localhost:27017/react-py-todo-app
+migrations_dir: migrations
