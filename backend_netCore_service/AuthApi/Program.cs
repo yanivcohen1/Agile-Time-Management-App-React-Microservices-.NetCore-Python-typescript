@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Diagnostics;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Extras.DynamicProxy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,60 @@ if (args.Length >= 2 && args[0] == "--env")
 }
 
 builder.Configuration.AddYamlFile($"{env}.appsettings.yaml", optional: true, reloadOnChange: true);
+
+// Use Autofac as the DI container
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+// Configure Autofac container
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+{
+    // Register the interceptor
+    containerBuilder.RegisterType<ErrorLoggingInterceptor>();
+
+    var databaseProvider = builder.Configuration["Database:Provider"];
+
+    // Register services with interception
+    if (databaseProvider == "MongoDB")
+    {
+        var mongoConnection = builder.Configuration.GetConnectionString("MongoConnection");
+        var databaseName = mongoConnection?.Split('/').Last() ?? "netcore_auth_xunit";
+        containerBuilder.RegisterType<MongoUserService>()
+            .As<IUserService>()
+            .WithParameter("connectionString", mongoConnection!)
+            .WithParameter("databaseName", databaseName)
+            .EnableInterfaceInterceptors()
+            .InterceptedBy(typeof(ErrorLoggingInterceptor));
+
+        containerBuilder.RegisterType<MongoTodoService>()
+            .As<ITodoService>()
+            .WithParameter("connectionString", mongoConnection!)
+            .WithParameter("databaseName", databaseName)
+            .EnableInterfaceInterceptors()
+            .InterceptedBy(typeof(ErrorLoggingInterceptor));
+    }
+    else
+    {
+        containerBuilder.RegisterType<DatabaseUserService>()
+            .As<IUserService>()
+            .EnableInterfaceInterceptors()
+            .InterceptedBy(typeof(ErrorLoggingInterceptor));
+
+        // For TodoService, using MongoDB as per existing code
+        var mongoConnection = builder.Configuration.GetConnectionString("MongoConnection") ?? "mongodb://localhost:27017/netcore_auth_xunit";
+        var databaseName = mongoConnection.Split('/').Last();
+        containerBuilder.RegisterType<MongoTodoService>()
+            .As<ITodoService>()
+            .WithParameter("connectionString", mongoConnection)
+            .WithParameter("databaseName", databaseName)
+            .EnableInterfaceInterceptors()
+            .InterceptedBy(typeof(ErrorLoggingInterceptor));
+    }
+
+    containerBuilder.RegisterType<TokenService>()
+        .As<ITokenService>()
+        .EnableInterfaceInterceptors()
+        .InterceptedBy(typeof(ErrorLoggingInterceptor));
+});
 
 // Configure server URLs from YAML
 var urls = builder.Configuration["Server:Urls"];
@@ -49,20 +106,20 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 21)),
         mySqlOptions => mySqlOptions.EnableStringComparisonTranslations()));
 
-// Register user service based on database provider
-var databaseProvider = builder.Configuration["Database:Provider"];
-if (databaseProvider == "MongoDB")
-{
-    var mongoConnection = builder.Configuration.GetConnectionString("MongoConnection");
-    var databaseName = mongoConnection?.Split('/').Last() ?? "netcore_auth_xunit";
-    builder.Services.AddScoped<IUserService>(sp => new MongoUserService(mongoConnection!, databaseName));
-}
-else
-{
-    builder.Services.AddScoped<IUserService, DatabaseUserService>(); // Use MySQL-backed user service
-}
+// Services are now registered in Autofac with interception
+// var databaseProvider = builder.Configuration["Database:Provider"];
+// if (databaseProvider == "MongoDB")
+// {
+//     var mongoConnection = builder.Configuration.GetConnectionString("MongoConnection");
+//     var databaseName = mongoConnection?.Split('/').Last() ?? "netcore_auth_xunit";
+//     builder.Services.AddScoped<IUserService>(sp => new MongoUserService(mongoConnection!, databaseName));
+// }
+// else
+// {
+//     builder.Services.AddScoped<IUserService, DatabaseUserService>(); // Use MySQL-backed user service
+// }
 
-builder.Services.AddScoped<ITokenService, TokenService>();
+// builder.Services.AddScoped<ITokenService, TokenService>();
 
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()
     ?? throw new InvalidOperationException("JWT configuration is missing");
@@ -109,21 +166,22 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddHealthChecks();
 
-// Register TodoService
-if (databaseProvider == "MongoDB")
-{
-    var mongoConnection = builder.Configuration.GetConnectionString("MongoConnection");
-    var databaseName = mongoConnection?.Split('/').Last() ?? "netcore_auth_xunit";
-    builder.Services.AddScoped<ITodoService>(sp => new MongoTodoService(mongoConnection!, databaseName));
-}
-else
-{
-    // Fallback or implementation for SQL if needed, for now throwing or using MongoService if connection string available
-    // Assuming MongoDB is the primary target for Todos as per instructions
-    var mongoConnection = builder.Configuration.GetConnectionString("MongoConnection") ?? "mongodb://localhost:27017/netcore_auth_xunit";
-    var databaseName = mongoConnection.Split('/').Last();
-    builder.Services.AddScoped<ITodoService>(sp => new MongoTodoService(mongoConnection, databaseName));
-}
+// Services are now registered in Autofac with interception
+// // Register TodoService
+// if (databaseProvider == "MongoDB")
+// {
+//     var mongoConnection = builder.Configuration.GetConnectionString("MongoConnection");
+//     var databaseName = mongoConnection?.Split('/').Last() ?? "netcore_auth_xunit";
+//     builder.Services.AddScoped<ITodoService>(sp => new MongoTodoService(mongoConnection!, databaseName));
+// }
+// else
+// {
+//     // Fallback or implementation for SQL if needed, for now throwing or using MongoService if connection string available
+//     // Assuming MongoDB is the primary target for Todos as per instructions
+//     var mongoConnection = builder.Configuration.GetConnectionString("MongoConnection") ?? "mongodb://localhost:27017/netcore_auth_xunit";
+//     var databaseName = mongoConnection.Split('/').Last();
+//     builder.Services.AddScoped<ITodoService>(sp => new MongoTodoService(mongoConnection, databaseName));
+// }
 
 var app = builder.Build();
 
