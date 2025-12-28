@@ -102,6 +102,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower;
     });
 
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<LogAfterThrowingFilter>();
+});
+
 builder.Services.AddHealthChecks();
 
 // Register TodoService
