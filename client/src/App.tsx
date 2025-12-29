@@ -4,7 +4,7 @@ import { CssBaseline, CircularProgress, Box } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import { ColorModeProvider } from './context/ColorModeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Layout from './components/Layout';
+import Layout from './components/SideMenu';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
