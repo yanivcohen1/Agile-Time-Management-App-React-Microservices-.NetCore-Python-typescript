@@ -7,7 +7,7 @@ const api = axios.create({
 export const setupInterceptors = (
   setLoading: (progress: number) => void, 
   enqueueSnackbar: (msg: string, opts: unknown) => void,
-  onUnauthorized?: () => void
+  logout?: () => void
 ) => {
   // Store interceptor IDs to eject them later if needed, but for now we just add them.
   // Note: This might add duplicate interceptors if called multiple times.
@@ -38,8 +38,8 @@ export const setupInterceptors = (
       const message = error.response?.data?.detail || 'An error occurred';
       
       if (message === 'Could not validate credentials' || error.response?.status === 401) {
-        if (onUnauthorized) {
-          onUnauthorized();
+        if (logout) {
+          logout();
         }
       }
       if (Array.isArray(message)) {
