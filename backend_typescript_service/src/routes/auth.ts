@@ -6,7 +6,7 @@ import { HttpError } from '../errors/httpError';
 import { User } from '../models/User';
 import { comparePassword } from '../lib/password';
 import multer from 'multer';
-import { authenticate } from '../middleware/authenticate';
+import { authenticate, requireRole } from '../middleware/authenticate';
 import { orm } from '../config/database';
 
 const upload = multer();
@@ -74,6 +74,21 @@ authRouter.get('/me', authenticate, async (req: Request, res: Response, next: Ne
       full_name: user.fullName || user.username,
       role: user.role
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+authRouter.get('/users', authenticate, requireRole('admin'), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const em = RequestContext.getEntityManager()!;
+    const users = await em.find(User, {});
+
+    res.json(users.map(user => ({
+      email: user.username,
+      full_name: user.fullName || user.username,
+      role: user.role
+    })));
   } catch (error) {
     next(error);
   }

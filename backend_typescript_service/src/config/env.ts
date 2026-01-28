@@ -32,7 +32,7 @@ export interface CredentialDefinition {
   role: UserRole;
 }
 
-const JWT_SECRET = config.Jwt.Key;
+const JWT_SECRET = process.env.JWT_SECRET ?? config.Jwt.Key;
 
 const ADMIN_USERNAME = process.env.AUTH_ADMIN_USERNAME ?? "admin@todo.dev";
 const ADMIN_PASSWORD = process.env.AUTH_ADMIN_PASSWORD ?? "ChangeMe123!";

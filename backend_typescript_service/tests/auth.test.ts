@@ -193,6 +193,42 @@ describe('Auth routes', () => {
       );
     });
   });
+
+  describe('GET /auth/users', () => {
+    it('returns all users for admin', async () => {
+      const { token } = await login(ADMIN_USERNAME, ADMIN_PASSWORD);
+
+      const response = await request(app)
+        .get('/auth/users')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBeGreaterThan(0);
+      expect(response.body[0]).toEqual(
+        expect.objectContaining({
+          email: expect.any(String),
+          full_name: expect.any(String),
+          role: expect.any(String)
+        })
+      );
+    });
+
+    it('blocks non-admin users from listing all users', async () => {
+      const { token } = await login(USER_USERNAME, USER_PASSWORD);
+
+      const response = await request(app)
+        .get('/auth/users')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(403);
+
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          detail: 'Access restricted to admin role.'
+        })
+      );
+    });
+  });
 });
 
 describe('Public routes', () => {
