@@ -1,18 +1,28 @@
-# Express + TypeScript + MongoDB + MikroORM + Authorization API
+# Express + TypeScript + MongoDB + MikroORM + Todo & Auth API
 
-A minimal Express server written in TypeScript with dedicated routes for handling user authorization flows and JWT issuance, using MongoDB for user storage via MikroORM.
+A robust Express server written in TypeScript providing comprehensive features for user authentication, role-based access control, and Todo management using MongoDB and MikroORM.
 
 ## Features
 
-- TypeScript-first Express setup with strict type checking.
-- MongoDB integration for user authentication.
-- `/api/auth/login` route validating credentials against MongoDB and returning a signed JWT with embedded role information.
-- `/api/auth/verify` route validating a provided JWT token.
-- Role-protected routes at `/api/user/profile` (user role) and `/api/admin/reports` (admin role).
-- Helmet, CORS, and JSON body parsing configured out of the box.
-- Centralized error handling with typed HTTP errors.
-- Health check endpoint at `/api/health`.
-- YAML-based configuration.
+- **TypeScript-first Setup:** Strict type checking and modern ESM support.
+- **Authentication & RBAC:**
+  - Secure `/auth/login` with JWT issuance.
+  - Role-based Access Control (Admin vs. User).
+  - `/auth/me` to retrieve current session details.
+  - `/auth/users` for administrative user management.
+- **Todo Management:**
+  - Full CRUD operations via `/todos`.
+  - Advanced filtering (status, search, date range).
+  - Pagination and sorting support.
+  - Status and workload analytics via aggregation pipelines.
+- **Security & Reliability:**
+  - Helmet for security headers and CORS configuration.
+  - Centralized error handling with typed HTTP errors.
+  - Health check endpoint at `/health`.
+- **Infrastructure:**
+  - MikroORM with MongoDB driver for efficient data access.
+  - YAML-based configuration (`appsettings.yml`) with environment file overrides.
+  - Database seeding for quick development setup.
 
 ## Getting Started
 
@@ -39,8 +49,8 @@ A minimal Express server written in TypeScript with dedicated routes for handlin
    ```
 
    By default, this creates two users (configurable via `.env`):
-   - Admin: `admin@example.com` / `Admin123!`
-   - User: `user@example.com` / `User123!`
+   - Admin: `admin@todo.dev` / `ChangeMe123!`
+   - User: `user@todo.dev` / `ChangeMe123!`
 
 ### Configuration
 
@@ -125,87 +135,59 @@ express_ts/
 
 ## API
 
-### POST `/api/auth/login`
+### Auth Endpoints (`/auth`)
 
-Request body:
+#### POST `/auth/login`
+Validates credentials and returns a JWT.
+- **Body**: `{ "username": "...", "password": "..." }`
+- **Response**: `{ "access_token": "...", "token_type": "Bearer", "expires_in": 3600, "role": "admin", "name": "..." }`
 
-```json
-{
-  "username": "admin@example.com",
-  "password": "Admin123!"
-}
-```
+#### GET `/auth/me`
+Returns current user information (requires auth).
+- **Header**: `Authorization: Bearer <token>`
 
-Response:
+#### GET `/auth/users`
+Lists all users (requires admin role).
+- **Header**: `Authorization: Bearer <token>`
 
-```json
-{
-  "token": "<jwt>",
-  "tokenType": "Bearer",
-  "expiresIn": 3600,
-  "role": "admin"
-}
-```
+#### POST `/auth/verify`
+Verify a JWT token and retrieve its payload.
+- **Body**: `{ "token": "..." }`
 
-### POST `/api/auth/verify`
+### Todo Endpoints (`/todos`)
+*All todo endpoints require authentication.*
 
-Request body:
+#### GET `/todos`
+Lists todos with support for pagination, sorting, and filtering.
+- **Query Params**: `page`, `size`, `sort_by`, `sort_desc`, `status`, `search`, `due_date_start`, `due_date_end`, `user_id` (admin only).
 
-```json
-{
-  "token": "<jwt>"
-}
-```
+#### POST `/todos`
+Creates a new todo.
+- **Body**: `{ "title": "...", "description": "...", "status": "BACKLOG", "due_date": "..." }`
 
-Response:
+#### PUT `/todos/:id`
+Updates an existing todo.
+- **Body**: Partial todo object.
 
-```json
-{
-  "valid": true,
-  "payload": {
-    "sub": "admin@example.com",
-    "role": "admin",
-    "iat": 0,
-    "exp": 0
-  }
-}
-```
+#### DELETE `/todos/:id`
+Deletes a todo.
 
-### GET `/api/user/profile`
+#### GET `/todos/stats/status`
+Retrieves count of todos grouped by status (`BACKLOG`, `PENDING`, `IN_PROGRESS`, `COMPLETED`).
 
-Headers:
+#### GET `/todos/stats/workload`
+Retrieves daily todo counts grouped by date.
 
-- `Authorization: Bearer <jwt>` (token issued to a user role)
+### System & Profile Endpoints
 
-Response:
+#### GET `/health`
+Simple health check returning `{ "status": "ok" }`.
 
-```json
-{
-  "message": "User profile data",
-  "user": {
-    "username": "user@example.com",
-    "role": "user"
-  }
-}
-```
+#### GET `/user/profile`
+User-specific profile endpoint (requires 'user' role).
 
-### GET `/api/admin/reports`
-
-Headers:
-
-- `Authorization: Bearer <jwt>` (token issued to an admin role)
-
-Response:
-
-```json
-{
-  "message": "Admin dashboard data",
-  "user": {
-    "username": "admin@example.com",
-    "role": "admin"
-  }
-}
-```
+#### GET `/admin/reports`
+Admin-specific reporting endpoint (requires 'admin' role).
 
 ## Testing the Endpoints
 
