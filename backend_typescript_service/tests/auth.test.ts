@@ -9,7 +9,7 @@ const USER_PASSWORD = process.env.AUTH_USER_PASSWORD ?? 'user-secret';
 
 async function login(username: string, password: string): Promise<{ token: string; role: string }> {
   const response = await request(app)
-    .post('/api/auth/login')
+    .post('/auth/login')
     .send({ username, password })
     .expect(200);
 
@@ -17,18 +17,18 @@ async function login(username: string, password: string): Promise<{ token: strin
 }
 
 describe('Auth routes', () => {
-  describe('POST /api/auth/login', () => {
+  describe('POST /auth/login', () => {
     it('returns a JWT when credentials are valid', async () => {
       const response = await request(app)
-        .post('/api/auth/login')
+        .post('/auth/login')
         .send({ username: USER_USERNAME, password: USER_PASSWORD })
         .expect(200);
 
       expect(response.body).toEqual(
         expect.objectContaining({
           access_token: expect.any(String),
-          tokenType: 'Bearer',
-          expiresIn: parseInt(process.env.JWT_ACCESS_TTL_SECONDS || '3600'),
+          token_type: 'Bearer',
+          expires_in: parseInt(process.env.JWT_ACCESS_TTL_SECONDS || '3600'),
           role: 'user'
         })
       );
@@ -37,40 +37,40 @@ describe('Auth routes', () => {
 
     it('rejects invalid credentials', async () => {
       const response = await request(app)
-        .post('/api/auth/login')
+        .post('/auth/login')
         .send({ username: 'wrong', password: 'credentials' })
         .expect(401);
 
       expect(response.body).toEqual(
         expect.objectContaining({
-          error: 'Invalid credentials.'
+          detail: 'Invalid credentials.'
         })
       );
     });
 
     it('validates request payload presence', async () => {
       const response = await request(app)
-        .post('/api/auth/login')
+        .post('/auth/login')
         .send({ username: USER_USERNAME })
         .expect(400);
 
       expect(response.body).toEqual(
         expect.objectContaining({
-          error: 'Both username and password must be provided as strings.'
+          detail: 'Both username and password must be provided as strings.'
         })
       );
     });
   });
 
-  describe('POST /api/auth/verify', () => {
+  describe('POST /auth/verify', () => {
     it('confirms a valid token', async () => {
       const loginResponse = await request(app)
-        .post('/api/auth/login')
+        .post('/auth/login')
         .send({ username: USER_USERNAME, password: USER_PASSWORD })
         .expect(200);
 
       const verifyResponse = await request(app)
-        .post('/api/auth/verify')
+        .post('/auth/verify')
         .send({ token: loginResponse.body.access_token })
         .expect(200);
 
@@ -87,26 +87,26 @@ describe('Auth routes', () => {
 
     it('rejects malformed tokens', async () => {
       const response = await request(app)
-        .post('/api/auth/verify')
+        .post('/auth/verify')
         .send({ token: 'not-a-valid-token' })
         .expect(401);
 
       expect(response.body).toEqual(
         expect.objectContaining({
-          error: 'Invalid or expired token.'
+          detail: 'Invalid or expired token.'
         })
       );
     });
 
     it('requires token in request body', async () => {
       const response = await request(app)
-        .post('/api/auth/verify')
+        .post('/auth/verify')
         .send({})
         .expect(400);
 
       expect(response.body).toEqual(
         expect.objectContaining({
-          error: 'Token is required in request body.'
+          detail: 'Token is required in request body.'
         })
       );
     });
@@ -117,7 +117,7 @@ describe('Auth routes', () => {
       const { token } = await login(USER_USERNAME, USER_PASSWORD);
 
       const response = await request(app)
-        .get('/api/user/profile')
+        .get('/user/profile')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
 
@@ -136,13 +136,13 @@ describe('Auth routes', () => {
       const { token } = await login(USER_USERNAME, USER_PASSWORD);
 
       const response = await request(app)
-        .get('/api/admin/reports')
+        .get('/admin/reports')
         .set('Authorization', `Bearer ${token}`)
         .expect(403);
 
       expect(response.body).toEqual(
         expect.objectContaining({
-          error: 'Access restricted to admin role.'
+          detail: 'Access restricted to admin role.'
         })
       );
     });
@@ -151,7 +151,7 @@ describe('Auth routes', () => {
       const { token } = await login(ADMIN_USERNAME, ADMIN_PASSWORD);
 
       const response = await request(app)
-        .get('/api/admin/reports')
+        .get('/admin/reports')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
 
@@ -170,25 +170,25 @@ describe('Auth routes', () => {
       const { token } = await login(ADMIN_USERNAME, ADMIN_PASSWORD);
 
       const response = await request(app)
-        .get('/api/user/profile')
+        .get('/user/profile')
         .set('Authorization', `Bearer ${token}`)
         .expect(403);
 
       expect(response.body).toEqual(
         expect.objectContaining({
-          error: 'Access restricted to user role.'
+          detail: 'Access restricted to user role.'
         })
       );
     });
 
     it('rejects requests without token', async () => {
       const response = await request(app)
-        .get('/api/user/profile')
+        .get('/user/profile')
         .expect(401);
 
       expect(response.body).toEqual(
         expect.objectContaining({
-          error: 'Authorization header missing or malformed.'
+          detail: 'Authorization header missing or malformed.'
         })
       );
     });
@@ -198,7 +198,7 @@ describe('Auth routes', () => {
 describe('Public routes', () => {
   it('returns healthy status without auth', async () => {
     const response = await request(app)
-      .get('/api/health')
+      .get('/health')
       .expect(200);
 
     expect(response.body).toEqual(
