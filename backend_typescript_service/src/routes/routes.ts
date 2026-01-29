@@ -38,8 +38,8 @@ const models: TsoaRoute.Models = {
             "status": {"ref":"TodoStatus","default":"BACKLOG"},
             "duration": {"dataType":"string"},
             "due_date": {"dataType":"datetime"},
-            "created_at": {"dataType":"datetime","default":"2026-01-29T09:07:27.233Z"},
-            "updated_at": {"dataType":"datetime","default":"2026-01-29T09:07:27.234Z"},
+            "created_at": {"dataType":"datetime","default":"2026-01-29T09:21:20.390Z"},
+            "updated_at": {"dataType":"datetime","default":"2026-01-29T09:21:20.391Z"},
             "user": {"dataType":"nestedObjectLiteral","nestedProperties":{"$ref":{"dataType":"string","required":true},"$id":{"ref":"ObjectId","required":true}},"required":true},
         },
         "additionalProperties": false,
@@ -63,7 +63,7 @@ const models: TsoaRoute.Models = {
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string"},
             "status": {"ref":"TodoStatus"},
-            "due_date": {"dataType":"string"},
+            "due_date": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "duration": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -74,9 +74,16 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"double"},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Partial_TodoCreateRequest_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"title":{"dataType":"string"},"description":{"dataType":"string"},"status":{"ref":"TodoStatus"},"due_date":{"dataType":"string"},"duration":{"dataType":"string"}},"validators":{}},
+    "TodoUpdateRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "title": {"dataType":"string"},
+            "description": {"dataType":"string"},
+            "status": {"ref":"TodoStatus"},
+            "due_date": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "duration": {"dataType":"string"},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "LoginResponse": {
@@ -273,7 +280,7 @@ export function RegisterRoutes(app: Router) {
         const argsTodoController_updateTodo: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                body: {"in":"body","name":"body","required":true,"ref":"Partial_TodoCreateRequest_"},
+                body: {"in":"body","name":"body","required":true,"ref":"TodoUpdateRequest"},
         };
         app.put('/todos/:id',
             authenticateMiddleware([{"jwt":[]}]),

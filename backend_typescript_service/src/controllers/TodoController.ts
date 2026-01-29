@@ -31,7 +31,15 @@ interface TodoCreateRequest {
   title: string;
   description?: string;
   status?: TodoStatus;
-  due_date?: string;
+  due_date?: string | null;
+  duration?: string;
+}
+
+interface TodoUpdateRequest {
+  title?: string;
+  description?: string;
+  status?: TodoStatus;
+  due_date?: string | null;
   duration?: string;
 }
 
@@ -181,7 +189,7 @@ export class TodoController extends Controller {
   public async updateTodo(
     @Path() id: string,
     @Request() request: RequestWithUser,
-    @Body() body: Partial<TodoCreateRequest>
+    @Body() body: TodoUpdateRequest
   ): Promise<Todo> {
     const em = RequestContext.getEntityManager()! as MongoEntityManager;
     const currentUser = await em.findOne(User, { username: request.user.username });
